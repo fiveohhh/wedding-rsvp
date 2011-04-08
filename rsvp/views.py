@@ -4,12 +4,15 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
-
+from rsvp.forms import RsvpForm
 
 def index(request):
     return render_to_response('rsvp/index.html', context_instance=RequestContext(request))
 
 def isAttending(request):
+    '''
+        find out if the user is attending or not
+    '''
     try:
         rsvp_id = request.POST['rsvp_id']
         rsvp = RSVP.objects.get(rsvpID=rsvp_id)
@@ -18,20 +21,30 @@ def isAttending(request):
         return render_to_response("rsvp/error.html")
 
 def choice(request):
+    '''
+        View to direct to either get more info if user is coming else mark as not attending.
+    '''
     rsvp_id = request.POST["rsvpID"]
     rsvp = RSVP.objects.get(rsvpID=rsvp_id)
+    form = RsvpForm(instance=rsvp)
     if 'No' in request.POST:
         return render_to_response("rsvp/notAttending.html")
     else:
-        return render_to_response("rsvp/getInfo.html", {'rsvp' : rsvp}, context_instance=RequestContext(request))
+        return render_to_response("rsvp/getInfo.html", {'rsvp' : rsvp, 'rsvp_form': form}, context_instance=RequestContext(request))
 
 def getInfo(request):
+    '''
+        Get RSVP info from user
+    '''
+
     rsvp_id = request.POST['rsvpID']
     rsvp = RSVP.objects.get(rsvpID=rsvp_id)
-    form = RSVPForm(instance=rsvp)
-    form.save()
-    return render_to_response("rsvp/getInfo.html", {'rsvp_form' : form}, context_instance=RequestContext(request))
-
+    form = RsvpForm(instance=rsvp)
+    if form.is_valid():
+        form.save()
+        return render_to_response("rsvp/getInfo.html", {'rsvp_form' : form}, context_instance=RequestContext(request))
+    else:
+        return render_to_response("rsvp/error.html")
     
 '''
      try:

@@ -17,8 +17,3 @@ class RSVP (models.Model):
 	rsvpDate = models.DateTimeField('date of rsvp', null = True, blank = True)
 	email = models.EmailField(max_length=50)
 	specialNotes = models.CharField(max_length=255)
-	
-class RSVPForm(ModelForm):
-	class Meta:
-		model = RSVP
-		exclude = ('rsvpID', 'allowedAdults', 'allowedChildren', 'rsvpDate')	
