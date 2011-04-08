@@ -1,0 +1,7 @@
+Enter your 8 digit reservation number:
+
+<form action="/rsvp/isAttending/" method="post">
+    {% csrf_token %}
+    <input type="text" name="rsvp_id">
+    <input type="submit" value="Submit">
+</form>

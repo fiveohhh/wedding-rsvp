@@ -1,0 +1,11 @@
+Hello {{ rsvp.firstName }}<br>
+<br>
+Will you be able to attend our wedding on October 1, 2011?
+<form name="isAttending" action="/rsvp/choice/" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="rsvpID" value="{{ rsvp.rsvpID }}">
+    <input type="submit" name="Yes" value="Yes">
+    <input type="submit" name="No" value="No">
+</form>
+
+

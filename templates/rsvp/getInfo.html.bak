@@ -1,0 +1,23 @@
+Hello {{ rsvp.firstName }}
+
+
+<form name="rsvp submission" action="/rsvp/submitInfo.html" method="POST">
+    <label for="adultsAttending">Adults:</label> 
+    <select name="adultDropdown">
+    {% for i in allowedAdults %}
+         <option value="{{ i }}">{{ i }}
+    {% endfor %}
+    </select>
+    <label for="childrenAttending">Children</label>
+    <select name="childrenDropdown">
+    {% for i in allowedChildren %}
+        <option value="{{ i }}">{{ i }}
+    {% endfor %}
+    </select>
+    <br><br>Special dietary needs:<br><textarea type="text" name="notes" rows="4" cols="40" >Please enter any special dietary needs here and we will follow up with a call to ensure that your needs are met</textarea>
+    <input type="hidden" name="rsvpID" value="{{ rsvp.rsvpID }}"> 
+    <input type="submit" value="RSVP">
+</form>
+
+
+

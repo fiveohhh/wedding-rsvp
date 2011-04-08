@@ -1,0 +1,7 @@
+Hello {{ rsvp.firstName }}
+
+<form action="/rsvp/getInfo/" method="post">{% csrf_token %}
+{{ rsvp_form.as_p }}
+<input type="submit" value="Submit" />
+</form>
+
