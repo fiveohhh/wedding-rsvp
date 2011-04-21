@@ -17,3 +17,12 @@ class RSVP (models.Model):
 	rsvpDate = models.DateTimeField('date of rsvp', null = True, blank = True)
 	email = models.EmailField(max_length=50)
 	specialNotes = models.CharField(max_length=255)
+	
+
+class Attendee (models.Model):
+	def __unicode__(self):
+		return self.firstNamev+ " " + self.lastName
+	firstName = models.CharField(max_length=30)
+	lastName = models.CharField(max_length=30)
+	isAdult = models.IntegerField(default = 1)
+	rsvp = models.ForeignKey(RSVP)

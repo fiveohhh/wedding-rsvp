@@ -16,6 +16,7 @@ def isAttending(request):
     try:
         rsvp_id = request.POST['rsvp_id']
         rsvp = RSVP.objects.get(rsvpID=rsvp_id)
+	request.session['id'] = rsvp_id
         return render_to_response("rsvp/isAttending.html", {'rsvp' : rsvp}, context_instance=RequestContext(request))
     except:
         return render_to_response("rsvp/error.html")
@@ -24,7 +25,7 @@ def choice(request):
     '''
         View to direct to either get more info if user is coming else mark as not attending.
     '''
-    rsvp_id = request.POST["rsvpID"]
+    rsvp_id = request.session["id"]
     rsvp = RSVP.objects.get(rsvpID=rsvp_id)
     form = RsvpForm(instance=rsvp)
     if 'No' in request.POST:
@@ -36,8 +37,7 @@ def getInfo(request):
     '''
         Get RSVP info from user
     '''
-
-    rsvp_id = request.POST['rsvpID']
+    rsvp_id = request.session["id"]
     rsvp = RSVP.objects.get(rsvpID=rsvp_id)
     form = RsvpForm(instance=rsvp)
     if form.is_valid():
@@ -45,18 +45,9 @@ def getInfo(request):
         return render_to_response("rsvp/getInfo.html", {'rsvp_form' : form}, context_instance=RequestContext(request))
     else:
         return render_to_response("rsvp/error.html")
-    
-'''
-     try:
-        rsvp_id = request.POST['rsvpID']
-        rsvp = RSVP.objects.get(rsvpID=rsvp_id)
-        return render_to_response("rsvp/getInfo.html", {'rsvp' : rsvp,'allowedAdults' : range(rsvp.allowedAdults+1),'allowedChildren' : range(rsvp.allowedChildren+1)}, context_instance=RequestContext(request))
-    except:
-        return render_to_response("rsvp/error.html")
-'''
-
 
 def submitInfo(request):
-    rsvpInfo = request.POST['RSVP']
-    rsvp = RSVP.ojects.get(rsvpID=rsvpInfo.rsvpID)
+    rsvp_id = request.session["id"]
+    rsvp = RSVP.objects.get(rsvpID=rsvp_id)
     
+    return HttpResponse(rsvp_id)
