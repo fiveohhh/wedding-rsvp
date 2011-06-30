@@ -1,0 +1,15 @@
+Please enter the names of those that will be attending the reception
+<form action="/rsvp/submitInfo/" method="post">{% csrf_token %}
+Adults<br>
+{% for i in adultsAttendingRange %}
+<input id="adultName{{ i }}" type="text" name="adultNames" maxLength="30"/><br>
+{% endfor %}
+
+{% if childrenAttending !=  0 %}
+Children
+{% for i in childrenAttendingRange %}
+<input id="childName{{ i }}" type="text" name="childrenNames" maxLength="30"/><br>
+{% endfor %}
+{% endif %}
+<input type=submit value="Submit"/>
+</form>
