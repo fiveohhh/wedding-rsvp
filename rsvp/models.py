@@ -15,14 +15,6 @@ class RSVP (models.Model):
 	adultsAttending = models.IntegerField(default = 0)
 	childrenAttending = models.IntegerField(default = 0)
 	rsvpDate = models.DateTimeField('date of rsvp', null = True, blank = True)
-	email = models.EmailField(max_length=50)
-	specialNotes = models.CharField(max_length=255)
+	email = models.EmailField(max_length=50, blank = True)
+	specialNotes = models.CharField(max_length=255, null = True, blank = True)
 	
-
-class Attendee (models.Model):
-	def __unicode__(self):
-		return self.firstNamev+ " " + self.lastName
-	firstName = models.CharField(max_length=30)
-	lastName = models.CharField(max_length=30)
-	isAdult = models.IntegerField(default = 1)
-	rsvp = models.ForeignKey(RSVP)
