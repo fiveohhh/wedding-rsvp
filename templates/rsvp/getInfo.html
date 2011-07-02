@@ -1,4 +1,6 @@
-Hello {{ rsvp.firstName }}
+Hello {{ rsvp.firstName }}<br><br>
+Please make sure you<font color="red"> enter an email</font> else you will have to start over.<br>
+It will be used for confirmation purposes
 
 <form action="/rsvp/getNames/" method="post">{% csrf_token %}
 {{ rsvp_form.as_p }} 

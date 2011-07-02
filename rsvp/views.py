@@ -1,15 +1,17 @@
 from django.template import Context, loader
 from rsvp.models import RSVP
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from rsvp.forms import RsvpForm
 from django.core.mail import EmailMessage
-
+from django.core.urlresolvers import reverse
+import sys
 import datetime
 
 def index(request):
+    request.session.flush()
     return render_to_response('rsvp/index.html', context_instance=RequestContext(request))
 
 def isAttending(request):
@@ -19,30 +21,43 @@ def isAttending(request):
     try:
         rsvp_id = request.POST['rsvp_id']
         rsvp = RSVP.objects.get(rsvpID=rsvp_id)
-        if str(rsvp.status) != '0':
-            errMsg = "It appears that you have already submitted your RSVP on " + str(rsvp.rsvpDate) + "\r\n" + 
-                       "Please contact us at 952.843.3290 if this is not the case"
-            return render_to_response("rsvp/error.html", {'errorMessage' :errMsg} )
-	request.session['id'] = rsvp_id
+        # check of rsvpDate is null. if it's not, the rsvp has been completed
+        if rsvp.rsvpDate:
+            errMsg = 'You have already completed your rsvp'
+            return render_to_response("rsvp/error.html", {'errorMessage' : errMsg })
+        request.session['id'] = rsvp_id
+        request.session.set_expiry(300)
         return render_to_response("rsvp/isAttending.html", {'rsvp' : rsvp}, context_instance=RequestContext(request))
     except:
-        return render_to_response("rsvp/error.html")
+        errMsg = sys.exc_info()[0]
+        return render_to_response("rsvp/error.html", {'errorMessage' : errMsg})
 
 def choice(request):
     '''
         View to direct to either get more info if user is coming else mark as not attending.
     '''
-    rsvp_id = request.session["id"]
-    rsvp = RSVP.objects.get(rsvpID=rsvp_id)
-    form = RsvpForm(instance=rsvp, max_adults=rsvp.allowedAdults, max_children=rsvp.allowedChildren)
-    if 'No' in request.POST:
-        request.session['status'] = 2
-        return render_to_response("rsvp/notAttending.html")
-    else:
-        request.session['status'] = 1
-        return render_to_response("rsvp/getInfo.html", {'rsvp' : rsvp, 'rsvp_form': form}, context_instance=RequestContext(request))
+    if 'id' not in request.session:
+       return HttpResponseRedirect(reverse('rsvp.views.index'))
+ 
+    try:
+        rsvp_id = request.session["id"]
+        rsvp = RSVP.objects.get(rsvpID=rsvp_id)
+        form = RsvpForm(instance=rsvp, max_adults=rsvp.allowedAdults, max_children=rsvp.allowedChildren)
+        if 'No' in request.POST:
+            request.session['status'] = 2
+            return render_to_response("rsvp/notAttending.html")
+        else:
+            request.session['status'] = 1
+            return render_to_response("rsvp/getInfo.html", {'rsvp' : rsvp, 'rsvp_form': form}, context_instance=RequestContext(request))
+    except:
+        errMsg = sys.exc_info()[0]
+        return render_to_response("rsvp/error.html", {'errorMessage' : errMsg})
 
 def getNames(request):
+    if 'id' not in request.session:
+        return HttpResponseRedirect(reverse('rsvp.views.index'))
+    elif not request.POST['email']:
+        return HttpResponseRedirect(reverse('rsvp.views.index'))
     rsvp_id = request.session["id"]
     adultsAttending = int(request.POST['adults_attending'])
     childrenAttending = int(request.POST['children_attending'])
@@ -52,6 +67,9 @@ def getNames(request):
     return render_to_response("rsvp/getNames.html", {'childrenAttending': childrenAttending, 'adultsAttendingRange' : range(adultsAttending), 'childrenAttendingRange' : range(childrenAttending)})
 
 def submitInfo(request):
+    if 'id' not in request.session:
+       return HttpResponseRedirect(reverse('rsvp.views.index'))
+    
     rsvp_id = request.session["id"]
     rsvp = RSVP.objects.get(rsvpID=rsvp_id)
     adultNames = request.POST.getlist('adultNames')
@@ -77,8 +95,7 @@ def submitInfo(request):
 
     rsvp.save()
 
-    request.session['rsvpCompleteed'] = 1
-    
+    request.session.flush()
     #send email confirmation
     status = ""
     if rsvp.status == 1:
