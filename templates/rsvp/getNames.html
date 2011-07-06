@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
 Please enter the names of those that will be attending the reception
 <form action="/rsvp/submitInfo/" method="post">{% csrf_token %}
 Adults<br>
@@ -13,3 +16,4 @@ Children<br>
 {% endif %}
 <input type=submit value="Submit"/>
 </form>
+{% endblock %}

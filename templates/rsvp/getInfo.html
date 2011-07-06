@@ -1,3 +1,5 @@
+{% extends "base.html"}
+{% block content %}
 Hello {{ rsvp.firstName }}<br><br>
 Please make sure you<font color="red"> enter an email</font> else you will have to start over.<br>
 It will be used for confirmation purposes
@@ -6,5 +8,5 @@ It will be used for confirmation purposes
 {{ rsvp_form.as_p }} 
 <input type="submit" value="Submit" />
 </form>
-
+{% endblock %}
 

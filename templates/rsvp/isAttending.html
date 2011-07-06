@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
 Hello {{ rsvp.firstName }}<br>
 <br>
 Will you be able to attend our wedding on October 1, 2011?
@@ -7,5 +10,5 @@ Will you be able to attend our wedding on October 1, 2011?
     <input type="submit" name="Yes" value="Yes">
     <input type="submit" name="No" value="No">
 </form>
-
+{% endblock %}
 

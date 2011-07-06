@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+
 Enter your 8 digit reservation number:
 
 <form action="/rsvp/isAttending/" method="post">
@@ -5,3 +7,4 @@ Enter your 8 digit reservation number:
     <input type="text" name="rsvp_id">
     <input type="submit" value="Submit">
 </form>
+{% endblock %}
