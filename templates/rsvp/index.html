@@ -1,7 +1,8 @@
-{% extends "base.html" %}
+{% extends "../templates/rsvp/base.html" %}
 
 Enter your 8 digit reservation number:
 
+{% block content %}
 <form action="/rsvp/isAttending/" method="post">
     {% csrf_token %}
     <input type="text" name="rsvp_id">
