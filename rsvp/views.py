@@ -45,6 +45,18 @@ def choice(request):
         form = RsvpForm(instance=rsvp, max_adults=rsvp.allowedAdults, max_children=rsvp.allowedChildren)
         if 'No' in request.POST:
             request.session['status'] = 2
+            rsvp.status = 2
+            rsvp.rsvpDate = datetime.datetime.now()
+            rsvp.save()
+            request.session.flush()
+            #send email confirmation
+            status = "NOT Attending"
+
+            subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
+            body =  "NOT ATTENDING"
+            email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
+            email.send()
+
             return render_to_response("rsvp/notAttending.html")
         else:
             request.session['status'] = 1
