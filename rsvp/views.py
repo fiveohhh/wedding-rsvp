@@ -20,6 +20,8 @@ def isAttending(request):
     '''
     try:
         rsvp_id = request.POST['rsvp_id']
+        rsvp_id = rsvp_id.replace('-','')
+        rsvp_id = rsvp_id.upper()
         rsvp = RSVP.objects.get(rsvpID=rsvp_id)
         # check of rsvpDate is null. if it's not, the rsvp has been completed
         if rsvp.rsvpDate:
@@ -28,8 +30,11 @@ def isAttending(request):
         request.session['id'] = rsvp_id
         request.session.set_expiry(300)
         return render_to_response("rsvp/isAttending.html", {'rsvp' : rsvp}, context_instance=RequestContext(request))
+    except RSVP.DoesNotExist:
+        errMsg = "Unable to find your key, please ensure that it is typed correctly"
+        return render_to_response("rsvp/error.html", {'errorMessage' : errMsg})
     except:
-        errMsg = sys.exc_info()[0]
+        errMsg =  sys.exc_info()[0]
         return render_to_response("rsvp/error.html", {'errorMessage' : errMsg})
 
 def choice(request):
