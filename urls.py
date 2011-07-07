@@ -8,5 +8,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
     (r'^rsvp/', include('rsvp.urls')),
     (r'^admin/', include(admin.site.urls)),
+    (r'^batchimport/', include('batchimport.urls')),
 )
    

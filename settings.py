@@ -102,6 +102,7 @@ INSTALLED_APPS = (
     'rsvp',
     # Uncomment the next line to enable the admin:
      'django.contrib.admin',
+    'batchimport',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
