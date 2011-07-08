@@ -96,14 +96,14 @@ def submitInfo(request):
     rsvp.status = request.session['status']
     
     # store names in specialNotes
-    strAdults = 'Adults:'
+    strAdults = ' Adults:'
     for s in adultNames:
         strAdults += s + ", "
-    strKids = 'Kids:'
+    strKids = '    Kids:'
     for s in kidNames:
         strKids += s + ", "
     names = strAdults + strKids
-    rsvp.specialNotes += names
+    rsvp.specialNotes = names
 
     rsvp.adultsAttending = request.session['adultsAttending']
     rsvp.childrenAttending = request.session['childrenAttending']
