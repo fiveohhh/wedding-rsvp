@@ -1,0 +1,7 @@
+This Django app was created to provide a way to allow wedding attendees to rsvp for our my wedding online.
+
+There is a branch with a data loading app that allows you to populate your attendees from an xls file.
+
+Attendees are tracked using an alphanumeric code that will be sent out with the invitations.
+
+Once the attendee enters a valid code, they will be able to rsvp.  If they accept the invitation, they will enter the number of adults and children and their names.  An email confirmation will than be fired off the them and you.
