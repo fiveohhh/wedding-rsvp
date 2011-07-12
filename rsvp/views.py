@@ -12,7 +12,8 @@ import datetime
 
 def index(request):
     request.session.flush()
-    return render_to_response('rsvp/index.html', context_instance=RequestContext(request))
+    errMsg = "OOPS still using dataImport branch!!"
+    return render_to_response('rsvp/error.html', {'errorMessage' : errMsg})
 
 def isAttending(request):
     '''
