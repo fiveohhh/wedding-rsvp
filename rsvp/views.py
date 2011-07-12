@@ -71,17 +71,24 @@ def choice(request):
         return render_to_response("rsvp/error.html", {'errorMessage' : errMsg})
 
 def getNames(request):
+   
+    
+    #If session doesn't contain ID send back to beginning    
     if 'id' not in request.session:
         return HttpResponseRedirect(reverse('rsvp.views.index'))
-    elif not request.POST['email']:
-        return HttpResponseRedirect(reverse('rsvp.views.index'))
-    rsvp_id = request.session["id"]
-    adultsAttending = int(request.POST['adults_attending'])
-    childrenAttending = int(request.POST['children_attending'])
-    rsvp = RSVP.objects.get(rsvpID=rsvp_id)
-    request.session['adultsAttending'] = adultsAttending
-    request.session['childrenAttending'] = childrenAttending
-    return render_to_response("rsvp/getNames.html", {'childrenAttending': childrenAttending, 'adultsAttendingRange' : range(adultsAttending), 'childrenAttendingRange' : range(childrenAttending)})
+    form = RsvpForm(request.POST)
+    if form.is_valid() and request.POST['email']:
+        rsvp_id = request.session["id"]
+        adultsAttending = int(request.POST['adults_attending'])
+        childrenAttending = int(request.POST['children_attending'])
+        rsvp = RSVP.objects.get(rsvpID=rsvp_id)
+        request.session['adultsAttending'] = adultsAttending
+        request.session['childrenAttending'] = childrenAttending
+        return render_to_response("rsvp/getNames.html", {'childrenAttending': childrenAttending, 'adultsAttendingRange' : range(adultsAttending), 'childrenAttendingRange' : range(childrenAttending)})
+    else:
+        errMsg = "Please go back and enter a valid email"
+        return render_to_response("rsvp/error.html", {'errorMessage' : errMsg})
+
 
 def submitInfo(request):
     if 'id' not in request.session:
