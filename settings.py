@@ -1,10 +1,10 @@
 # Django settings for weddingRsvp project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Andy Lee', 'andy@chiefmarley.com'),
+     ('Andy Lee', 'andy@chiefmarley.com'),
 )
 
 MANAGERS = ADMINS
