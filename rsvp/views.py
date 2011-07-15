@@ -55,13 +55,7 @@ def choice(request):
             rsvp.save()
             request.session.flush()
             #send email confirmation
-            status = "NOT Attending"
-
-            subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
-            body =  "NOT ATTENDING"
-            email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
-            email.send()
-
+            sendEmails(rsvp)
             return render_to_response("rsvp/notAttending.html")
         else:
             request.session['status'] = 1
@@ -73,15 +67,20 @@ def choice(request):
 def getNames(request):
     if 'id' not in request.session:
         return HttpResponseRedirect(reverse('rsvp.views.index'))
-    elif not request.POST['email']:
-        return HttpResponseRedirect(reverse('rsvp.views.index'))
-    rsvp_id = request.session["id"]
-    adultsAttending = int(request.POST['adults_attending'])
-    childrenAttending = int(request.POST['children_attending'])
-    rsvp = RSVP.objects.get(rsvpID=rsvp_id)
-    request.session['adultsAttending'] = adultsAttending
-    request.session['childrenAttending'] = childrenAttending
-    return render_to_response("rsvp/getNames.html", {'childrenAttending': childrenAttending, 'adultsAttendingRange' : range(adultsAttending), 'childrenAttendingRange' : range(childrenAttending)})
+    form = RsvpForm(request.POST)
+    if form.is_valid() and request.POST['email']:
+        rsvp_id = request.session["id"]
+        adultsAttending = int(request.POST['adults_attending'])
+        childrenAttending = int(request.POST['children_attending'])
+        rsvp = RSVP.objects.get(rsvpID=rsvp_id)
+        request.session['adultsAttending'] = adultsAttending
+        request.session['childrenAttending'] = childrenAttending
+        request.session['email'] = request.POST['email']
+        return render_to_response("rsvp/getNames.html", {'childrenAttending': childrenAttending, 'adultsAttendingRange' : range(adultsAttending), 'childrenAttendingRange' : range(childrenAttending)})
+    else:
+        errMsg = "Please go back and enter a valid email"
+        return render_to_response("rsvp/error.html", {'errorMessage' : errMsg})
+
 
 def submitInfo(request):
     if 'id' not in request.session:
@@ -109,13 +108,13 @@ def submitInfo(request):
     rsvp.childrenAttending = request.session['childrenAttending']
 
     rsvp.rsvpDate = datetime.datetime.now()
-
-    rsvp.save()
-
-    request.session.flush()
+    
+    rsvp.email = request.session['email']
     #send email confirmation
     sendEmails(rsvp)
-
+    
+    rsvp.save()
+    request.session.flush()
     return render_to_response("rsvp/thankYou.html", {'email':rsvp.email})
 
 
@@ -126,22 +125,21 @@ def sendEmails(rsvp):
     rsvperBody = ''
     if rsvp.status == 1:
         status = "Attending"
-        rsvperBody = rsvp.name + "\r\nThank you for your comfirmation of " + str(rsvp.adultsAttending) +  " adults, and " + str(rsvp.childrenAttending) + " children.\r\nWe look forward to seeing you on Oct 1!\r\n\r\nIf you have to change your rsvp, please reply to this email."
+        rsvperBody = rsvp.firstName + "\r\nThank you for your confirmation of " + str(rsvp.adultsAttending) +  " adults, and " + str(rsvp.childrenAttending) + " children.\r\nWe look forward to seeing you on Oct 1!\r\n\r\nIf you have to change your rsvp, please reply to this email."
     elif rsvp.status == 2:
         status = "NOT Attending"
-        rsvperBody = rsvp.name + "\r\nThank you for sending your regrets"
+        rsvperBody = rsvp.firstName + "\r\nThank you for sending your regrets"
     #send message to me
     subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
-    body =  "Attendees:" + rsvp.specialNotes
+    body =  "Attendees:" + rsvp.specialNotes + str(rsvp.email)
     email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
     email.send()
     #send message to rsvper
     subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
     
+    usrEmailAddr = str(rsvp.email)    
     
     body =  rsvperBody
-    email = EmailMessage(subject, body, to=[rsvp.email])
+    email = EmailMessage(subject, body, to=[usrEmailAddr])
     email.send()
     
-
- 

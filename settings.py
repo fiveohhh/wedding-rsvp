@@ -26,7 +26,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'bethandandy.wedding@gmail.com'
 EMAIL_HOST_PASSWORD = 'hB8VYTC!*Z#R'
 EMAIL_PORT = 587
-
+DEFAULT_FROM_EMAIL = 'bethandandy.wedding@gmail.com'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
