@@ -55,13 +55,7 @@ def choice(request):
             rsvp.save()
             request.session.flush()
             #send email confirmation
-            status = "NOT Attending"
-
-            subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
-            body =  "NOT ATTENDING"
-            email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
-            email.send()
-
+            sendEmails(rsvp)
             return render_to_response("rsvp/notAttending.html")
         else:
             request.session['status'] = 1
@@ -84,6 +78,7 @@ def getNames(request):
         rsvp = RSVP.objects.get(rsvpID=rsvp_id)
         request.session['adultsAttending'] = adultsAttending
         request.session['childrenAttending'] = childrenAttending
+        request.session['email'] = request.POST['email']
         return render_to_response("rsvp/getNames.html", {'childrenAttending': childrenAttending, 'adultsAttendingRange' : range(adultsAttending), 'childrenAttendingRange' : range(childrenAttending)})
     else:
         errMsg = "Please go back and enter a valid email"
@@ -116,21 +111,38 @@ def submitInfo(request):
     rsvp.childrenAttending = request.session['childrenAttending']
 
     rsvp.rsvpDate = datetime.datetime.now()
-
-    rsvp.save()
-
-    request.session.flush()
+    
+    rsvp.email = request.session['email']
     #send email confirmation
-    status = ""
-    if rsvp.status == 1:
-        status = "Attending"
-    elif rsvp.status == 2:
-        status = "NOT Attending"
-
-    subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
-    body =  "Attendees:" + rsvp.specialNotes
-    email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
-    email.send()
-
+    sendEmails(rsvp)
+    
+    rsvp.save()
+    request.session.flush()
     return render_to_response("rsvp/thankYou.html", {'email':rsvp.email})
 
+
+
+def sendEmails(rsvp):
+    status = ""
+    
+    rsvperBody = ''
+    if rsvp.status == 1:
+        status = "Attending"
+        rsvperBody = rsvp.firstName + "\r\nThank you for your confirmation of " + str(rsvp.adultsAttending) +  " adults, and " + str(rsvp.childrenAttending) + " children.\r\nWe look forward to seeing you on Oct 1!\r\n\r\nIf you have to change your rsvp, please reply to this email."
+    elif rsvp.status == 2:
+        status = "NOT Attending"
+        rsvperBody = rsvp.firstName + "\r\nThank you for sending your regrets"
+    #send message to me
+    subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
+    body =  "Attendees:" + rsvp.specialNotes + str(rsvp.email)
+    email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
+    email.send()
+    #send message to rsvper
+    subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
+    
+    usrEmailAddr = str(rsvp.email)    
+    
+    body =  rsvperBody
+    email = EmailMessage(subject, body, to=[usrEmailAddr])
+    email.send()
+    
