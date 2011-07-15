@@ -114,16 +114,34 @@ def submitInfo(request):
 
     request.session.flush()
     #send email confirmation
+    sendEmails(rsvp)
+
+    return render_to_response("rsvp/thankYou.html", {'email':rsvp.email})
+
+
+
+def sendEmails(rsvp):
     status = ""
+    
+    rsvperBody = ''
     if rsvp.status == 1:
         status = "Attending"
+        rsvperBody = rsvp.name + "\r\nThank you for your comfirmation of " + str(rsvp.adultsAttending) +  " adults, and " + str(rsvp.childrenAttending) + " children.\r\nWe look forward to seeing you on Oct 1!\r\n\r\nIf you have to change your rsvp, please reply to this email."
     elif rsvp.status == 2:
         status = "NOT Attending"
-
+        rsvperBody = rsvp.name + "\r\nThank you for sending your regrets"
+    #send message to me
     subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
     body =  "Attendees:" + rsvp.specialNotes
     email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
     email.send()
+    #send message to rsvper
+    subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
+    
+    
+    body =  rsvperBody
+    email = EmailMessage(subject, body, to=[rsvp.email])
+    email.send()
+    
 
-    return render_to_response("rsvp/thankYou.html", {'email':rsvp.email})
-
+ 
