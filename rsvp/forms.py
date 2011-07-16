@@ -7,8 +7,9 @@ class RsvpForm(ModelForm):
         model = RSVP
         exclude= ('firstName', 'lastName','specialNotes', 'adultsAttending' ,'childrenAttending','status' ,'rsvpID', 'allowedAdults', 'allowedChildren', 'rsvpDate')
     def __init__(self, *args, **kwargs):
-        max_adults = kwargs.pop('max_adults', 2)
-        max_children = kwargs.pop('max_children',0)
+        #need the default to be any possible selection, else the form doesn't validate, no idea why...
+        max_adults = kwargs.pop('max_adults',9)
+        max_children = kwargs.pop('max_children',9)
 
         super(RsvpForm, self).__init__(*args, **kwargs)
 
