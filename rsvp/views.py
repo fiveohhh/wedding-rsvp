@@ -89,6 +89,8 @@ def submitInfo(request):
     adultNames = request.POST.getlist('adultNames')
     kidNames = request.POST.getlist('childrenNames')
     
+    rsvp.dietaryConcerns = request.POST['dietaryConcerns']
+
     # set rsvpStatus
     rsvp.status = request.session['status']
     
