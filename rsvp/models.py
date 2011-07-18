@@ -17,4 +17,4 @@ class RSVP (models.Model):
 	rsvpDate = models.DateTimeField('date of rsvp', null = True, blank = True)
 	email = models.EmailField(max_length=50, blank = True)
 	specialNotes = models.CharField(max_length=255, null = True, blank = True)
-	
+	dietaryConcerns = models.CharField(max_length=255, null = True, blank = True)

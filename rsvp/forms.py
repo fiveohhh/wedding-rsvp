@@ -5,7 +5,7 @@ from django import forms
 class RsvpForm(ModelForm):
     class Meta:
         model = RSVP
-        exclude= ('firstName', 'lastName','specialNotes', 'adultsAttending' ,'childrenAttending','status' ,'rsvpID', 'allowedAdults', 'allowedChildren', 'rsvpDate')
+        exclude= ('dietaryConcerns', 'firstName', 'lastName','specialNotes', 'adultsAttending' ,'childrenAttending','status' ,'rsvpID', 'allowedAdults', 'allowedChildren', 'rsvpDate')
     def __init__(self, *args, **kwargs):
         #need the default to be any possible selection, else the form doesn't validate, no idea why...
         max_adults = kwargs.pop('max_adults',9)
