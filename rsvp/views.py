@@ -137,6 +137,6 @@ def sendEmails(rsvp):
         status = "NOT Attending"
     #send message to me
     subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
-    body =  "Attendees:" + rsvp.specialNotes + str(rsvp.email)
+    body =  "Attendees:" + rsvp.specialNotes + "\r\n Dietary concerns: " + rsvp.dietaryConcerns
     email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
     email.send()
