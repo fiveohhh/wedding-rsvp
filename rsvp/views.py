@@ -53,6 +53,7 @@ def choice(request):
             rsvp.status = 2
             rsvp.rsvpDate = datetime.datetime.now()
             rsvp.save()
+            sendEmails(rsvp)
             request.session.flush()
             return render_to_response("rsvp/notAttending.html")
         else:
@@ -139,6 +140,6 @@ def sendEmails(rsvp):
         status = "NOT Attending"
     #send message to me
     subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
-    body =  "Attendees:" + rsvp.specialNotes + str(rsvp.email)
+    body =  "Attendees:" + rsvp.specialNotes + "\r\n Dietary concerns: " + rsvp.dietaryConcerns
     email = EmailMessage(subject, body, to=['andy@chiefmarley.com'])
     email.send()
