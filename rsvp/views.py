@@ -53,6 +53,7 @@ def choice(request):
             rsvp.status = 2
             rsvp.rsvpDate = datetime.datetime.now()
             rsvp.save()
+            sendEmails(rsvp)
             request.session.flush()
             return render_to_response("rsvp/notAttending.html")
         else:
