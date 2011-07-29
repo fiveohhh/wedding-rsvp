@@ -125,8 +125,14 @@ def sendEmails(rsvp):
     
     rsvperBody = ''
     if rsvp.status == 1:
+        attendingStr = ""
+        if rsvp.allowedChildren == 0:
+            attendingStr = str(rsvp.adultsAttending) +  " adults"
+        else:
+            attendingStr = str(rsvp.adultsAttending) +  " adults, and " + str(rsvp.childrenAttending) + " children"
+
         status = "Attending"
-        rsvperBody = rsvp.firstName + "\r\nThank you for your confirmation of " + str(rsvp.adultsAttending) +  " adults, and " + str(rsvp.childrenAttending) + " children.\r\nWe look forward to seeing you on Oct 1!\r\n\r\nIf you have to change your rsvp, please reply to this email."
+        rsvperBody = rsvp.firstName + "\r\nThank you for your confirmation of " + attendingStr + ".\r\nWe look forward to seeing you on Oct 1!\r\n\r\nIf you have to change your rsvp, please reply to this email."
         #send message to rsvper, we only send if they are attending
         subject ="RSVP confirmation: " + rsvp.firstName + " " + rsvp.lastName + " is " + status
         usrEmailAddr = str(rsvp.email)
