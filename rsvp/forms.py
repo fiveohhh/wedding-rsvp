@@ -15,6 +15,10 @@ class RsvpForm(ModelForm):
 
         adult_choices = ( (x,str(x)) for x in range(1,max_adults+1)) 
         children_choices = ( (x,str(x)) for x in range(max_children+1)) 
-	
+
         self.fields['adults_attending'] = forms.ChoiceField(choices = adult_choices)
-        self.fields['children_attending'] = forms.ChoiceField(choices = children_choices)
+
+       	if max_children != 0:
+            self.fields['children_attending'] = forms.ChoiceField(choices = children_choices)
+        else:
+            self.fields['children_attending'] = forms.ChoiceField(choices = children_choices, widget = forms.HiddenInput(), initial = 0)
